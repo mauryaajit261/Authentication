@@ -1,0 +1,13 @@
+<div class="dashboard">
+  <h2>Organization Management</h2>
+
+  <input type="text" [(ngModel)]="newOrg" placeholder="New Organization">
+  <button (click)="addOrg()">Add Organization</button>
+
+  <ul>
+    <li *ngFor="let org of organizations">
+      {{ org.name }}
+      <button (click)="deleteOrg(org.name)">Delete</button>
+    </li>
+  </ul>
+</div>

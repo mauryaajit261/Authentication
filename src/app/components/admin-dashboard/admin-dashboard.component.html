@@ -1,0 +1,147 @@
+<div class="dashboard">
+  <h2>Admin Dashboard</h2>
+  <button class="logout-btn" (click)="logout()">Logout</button>
+
+  <div *ngIf="organization" class="organization-info">
+    <p>You are managing organization: <strong>{{ organization }}</strong></p>
+  </div>
+
+  <div class="permissions-info">
+    <h3>Your Permissions</h3>
+    <div class="permission-badges">
+      <span class="badge" [ngClass]="{'active': permissions.add}">Add</span>
+      <span class="badge" [ngClass]="{'active': permissions.delete}">Delete</span>
+      <span class="badge" [ngClass]="{'active': permissions.view}">View</span>
+      <span class="badge" [ngClass]="{'active': permissions.update}">Update</span>
+    </div>
+  </div>
+  
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <!-- Organization Items Section (Dummy Data) -->
+  <div class="section">
+    <h3>Organization Items</h3>
+    <p>This section demonstrates your permissions in action with dummy data.</p>
+    
+    <div class="add-item-form" *ngIf="permissions.add">
+      <h4>Add New Item</h4>
+      <div class="form-group">
+        <label for="item-name">Item Name:</label>
+        <input type="text" id="item-name" [(ngModel)]="newItemName" placeholder="Item Name">
+      </div>
+      <div class="form-group">
+        <label for="item-description">Description:</label>
+        <input type="text" id="item-description" [(ngModel)]="newItemDescription" placeholder="Description">
+      </div>
+      <button (click)="addItem()">Add Item</button>
+    </div>
+    
+    <div *ngIf="!permissions.add" class="no-permission-message">
+      You don't have permission to add items.
+    </div>
+    
+    <div *ngIf="permissions.view">
+      <h4>Items List</h4>
+      <div class="items-container">
+        <div *ngIf="dummyItems.length === 0" class="empty-message">No items available.</div>
+        <table *ngIf="dummyItems.length > 0" class="items-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th *ngIf="permissions.update || permissions.delete">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let item of dummyItems">
+              <!-- Regular view mode -->
+              <tr *ngIf="editingItem?.id !== item.id">
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.status }}</td>
+                <td *ngIf="permissions.update || permissions.delete" class="actions-cell">
+                  <button *ngIf="permissions.update" (click)="startEditItem(item)" class="update-btn">Edit</button>
+                  <button *ngIf="permissions.delete" (click)="deleteItem(item.id)" class="delete-btn">Delete</button>
+                </td>
+              </tr>
+              
+              <!-- Edit mode -->
+              <tr *ngIf="editingItem?.id === item.id" class="editing-row">
+                <td>{{ item.id }}</td>
+                <td>
+                  <input type="text" [(ngModel)]="editingItem.name">
+                </td>
+                <td>
+                  <input type="text" [(ngModel)]="editingItem.description">
+                </td>
+                <td>
+                  <select [(ngModel)]="editingItem.status">
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </td>
+                <td class="actions-cell">
+                  <button (click)="saveItemEdit()" class="save-btn">Save</button>
+                  <button (click)="cancelEdit()" class="cancel-btn">Cancel</button>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div *ngIf="!permissions.view" class="no-permission-message">
+      You don't have permission to view items.
+    </div>
+  </div>
+
+  <!-- User Management Section -->
+  <div class="section" *ngIf="permissions.add || permissions.view">
+    <h3>Manage Users</h3>
+    
+    <div class="add-user-form" *ngIf="permissions.add">
+      <h4>Add New User</h4>
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" [(ngModel)]="newUser" placeholder="Username">
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" [(ngModel)]="newPassword" placeholder="Password">
+      </div>
+      <button (click)="addUser()">Add User</button>
+    </div>
+    
+    <div *ngIf="permissions.view">
+      <h4>User List</h4>
+      <div class="list-container">
+        <div *ngIf="users.length === 0" class="empty-message">No users available.</div>
+        <ul *ngIf="users.length > 0">
+          <li *ngFor="let user of users">
+            <div class="user-info">
+              {{ user.username }} ({{ user.role }})
+            </div>
+            <div class="user-actions">
+              <button *ngIf="permissions.update" (click)="updateUser(user.username)" class="update-btn">Update</button>
+              <button *ngIf="permissions.delete && user.role !== 'superadmin' && user.role !== 'admin'" 
+                      (click)="removeUser(user.username)" class="delete-btn">Remove</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div *ngIf="!permissions.view && !permissions.add" class="no-permission-message">
+      You don't have any permissions to manage users.
+    </div>
+  </div>
+  
+  <div *ngIf="!permissions.add && !permissions.view" class="no-permissions">
+    <p>You don't have any permissions to manage users or items. Please contact the Super Admin.</p>
+  </div>
+</div>

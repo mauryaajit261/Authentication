@@ -1,0 +1,43 @@
+<div class="login-container">
+  <div class="login-header">
+    <h2>Role-Based Authentication</h2>
+    <p class="subtitle">Sign in to access your dashboard</p>
+  </div>
+
+  <form (submit)="onLogin()">
+    <div class="form-group">
+      <label for="role">Select Role:</label>
+      <select [(ngModel)]="role" name="role" id="role" required>
+        <option value="" disabled selected>-- Select your role --</option>
+        <option value="superadmin">Super Admin</option>
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input type="text" [(ngModel)]="username" name="username" id="username" placeholder="Enter your username" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password:</label>
+      <input type="password" [(ngModel)]="password" name="password" id="password" placeholder="Enter your password" required>
+    </div>
+
+    <button type="submit">Sign In</button>
+  </form>
+
+  <div *ngIf="errorMessage" class="error">
+    <i class="error-icon">⚠️</i> {{ errorMessage }}
+  </div>
+
+  <div class="login-footer">
+    <p class="credentials-hint">
+      <strong>Default credentials:</strong><br>
+      <span>Super Admin: superadmin / admin123</span><br>
+      <span>Admin: admin / admin123</span><br>
+      <span>User: user / user123</span>
+    </p>
+  </div>
+</div>

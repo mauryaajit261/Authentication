@@ -1,0 +1,124 @@
+<div class="dashboard">
+  <h2>Super Admin Dashboard</h2>
+
+  <button class="logout-btn" (click)="logout()">Logout</button>
+
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <div class="section">
+    <h3>Manage Organizations</h3>
+    <div class="add-form">
+      <input type="text" [(ngModel)]="newOrganization" placeholder="Organization Name">
+      <button (click)="addOrganization()">Add Organization</button>
+    </div>
+
+    <h4>Organizations List</h4>
+    <div class="list-container">
+      <div *ngIf="organizations.length === 0" class="empty-message">No organizations added yet.</div>
+      <ul>
+        <li *ngFor="let org of organizations">
+          <div class="org-info">
+            <strong>{{ org.name }}</strong>
+            <div *ngIf="org.admins.length > 0" class="admins-list">
+              <small>Admins: {{ org.admins.join(', ') }}</small>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Manage Admins</h3>
+    
+    <div class="tabs">
+      <div class="tab-header">
+        <button class="tab-btn" [ngClass]="{'active': activeTab === 'add-admin'}" (click)="setActiveTab('add-admin')">Add Admin</button>
+        <button class="tab-btn" [ngClass]="{'active': activeTab === 'assign-admin'}" (click)="setActiveTab('assign-admin')">Assign Admin</button>
+      </div>
+      
+      <div id="add-admin" class="tab-content" [ngClass]="{'active': activeTab === 'add-admin'}">
+        <h4>Create New Admin</h4>
+        <div class="add-form">
+          <div class="form-group">
+            <label for="admin-username">Admin Username:</label>
+            <input type="text" id="admin-username" [(ngModel)]="newAdminUsername" placeholder="Username">
+          </div>
+          <div class="form-group">
+            <label for="admin-password">Admin Password:</label>
+            <input type="password" id="admin-password" [(ngModel)]="newAdminPassword" placeholder="Password">
+          </div>
+          <button (click)="addAdmin()">Create Admin</button>
+        </div>
+        
+        <h4>Existing Admins</h4>
+        <div class="list-container">
+          <div *ngIf="admins.length === 0" class="empty-message">No admins added yet.</div>
+          <ul>
+            <li *ngFor="let admin of admins">
+              <div class="admin-info">
+                <strong>{{ admin.username }}</strong>
+                <div *ngIf="admin.organization" class="org-assignment">
+                  <small>Assigned to: {{ admin.organization }}</small>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div id="assign-admin" class="tab-content" [ngClass]="{'active': activeTab === 'assign-admin'}">
+        <h4>Assign Admin to Organization</h4>
+        <div class="assign-form">
+          <div class="form-group">
+            <label for="org-select">Select Organization:</label>
+            <select id="org-select" [(ngModel)]="selectedOrg">
+              <option value="">-- Select Organization --</option>
+              <option *ngFor="let org of organizations" [value]="org.name">{{ org.name }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="admin-select">Select Admin:</label>
+            <select id="admin-select" [(ngModel)]="selectedAdmin">
+              <option value="">-- Select Admin --</option>
+              <option *ngFor="let admin of admins" [value]="admin.username">
+                {{ admin.username }} {{ admin.organization ? '(Assigned to: ' + admin.organization + ')' : '' }}
+              </option>
+            </select>
+          </div>
+
+          <div class="permissions-container">
+            <h4>Admin Permissions</h4>
+            <div class="checkbox-group">
+              <div class="checkbox">
+                <input type="checkbox" id="add-perm" [(ngModel)]="permissions.add">
+                <label for="add-perm">Add</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="delete-perm" [(ngModel)]="permissions.delete">
+                <label for="delete-perm">Delete</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="view-perm" [(ngModel)]="permissions.view">
+                <label for="view-perm">View</label>
+              </div>
+              <div class="checkbox">
+                <input type="checkbox" id="update-perm" [(ngModel)]="permissions.update">
+                <label for="update-perm">Update</label>
+              </div>
+            </div>
+          </div>
+
+          <button (click)="assignAdmin()">Assign Admin with Permissions</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>System Logs</h3>
+    <button (click)="viewLogs()">View Logs</button>
+  </div>
+</div>

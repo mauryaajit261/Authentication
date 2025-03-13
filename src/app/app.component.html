@@ -1,0 +1,15 @@
+<div class="container">
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <a routerLink="/" class="brand-logo">Role-Based System</a>
+    <div class="nav-links" *ngIf="authService.isAuthenticated()">
+      <a *ngIf="role === 'superadmin'" routerLink="/super-admin-dashboard">Super Admin</a>
+      <a *ngIf="role === 'admin'" routerLink="/admin-dashboard">Admin</a>
+      <a *ngIf="role === 'user'" routerLink="/user-dashboard">User</a>
+      <a (click)="logout()">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Dynamic Content -->
+  <router-outlet></router-outlet>
+</div>
